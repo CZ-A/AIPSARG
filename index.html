@@ -3,36 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIPSARG</title>
+    <meta name="description" content="AIPSARG - Proyek Trading Otomatis dengan Strategi PSAR menggunakan OKX API">
+    <title>AIPSARG - Advanced Trading System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="#" class="brand">AIPSARG</a>
+                <ul class="nav-links">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#setup">Setup</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <h1>Welcome to AIPSARG</h1>
+            <p>An advanced trading system leveraging PSAR strategies with OKX API integration.</p>
+            <a href="#setup" class="btn-primary">Get Started</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2>About AIPSARG</h2>
+            <p>AIPSARG is an automated trading bot designed to execute PSAR-based strategies efficiently on OKX exchange. It is built for traders seeking reliability, precision, and speed.</p>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section bg-light">
+        <div class="container">
+            <h2>Features</h2>
+            <ul>
+                <li>Customizable PSAR parameters for adaptive trading strategies.</li>
+                <li>Real-time market data monitoring and analysis.</li>
+                <li>Comprehensive logging and reporting of trade performance.</li>
+                <li>Secure integration with OKX API.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Setup Section -->
+    <section id="setup" class="section">
+        <div class="container">
+            <h2>Setup</h2>
+            <ol>
+                <li>Clone the repository: <code>git clone https://github.com/cz-a/AIPSARG.git</code></li>
+                <li>Install dependencies: <code>pip install -r requirements.txt</code></li>
+                <li>Configure your <code>.env</code> file with API keys and parameters.</li>
+                <li>Run the bot: <code>python main.py</code></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section bg-light">
+        <div class="container">
+            <h2>Contact</h2>
+            <p>Have questions or suggestions? Reach out to us:</p>
+            <ul>
+                <li>Email: <a href="mailto:cz-a@example.com">cz-a@example.com</a></li>
+                <li>GitHub: <a href="https://github.com/cz-a/AIPSARG">https://github.com/cz-a/AIPSARG</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AIPSARG. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Stylesheet -->
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            color: #333;
         }
-        h1, h2 {
-            color: #2c3e50;
+        .navbar {
+            background: #333;
+            color: #fff;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        a {
-            color: #2980b9;
+        .navbar .brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+        }
+        #hero {
+            background: #007BFF;
+            color: #fff;
+            text-align: center;
+            padding: 5rem 0;
+        }
+        #hero .btn-primary {
+            background: #fff;
+            color: #007BFF;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .section {
+            padding: 2rem 0;
+        }
+        .bg-light {
+            background: #f9f9f9;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background: #333;
+            color: #fff;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 1100px;
+            margin: auto;
+            padding: 0 1rem;
         }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to AIPSARG</h1>
-        <p><strong>AIPSARG</strong> adalah sebuah proyek berbasis Python untuk analisis dan otomatisasi trading menggunakan strategi PSAR.</p>
-
-        <h2>Fitur Utama</h2>
-        <ul>
-            <li>Strategi PSAR dengan parameter yang dapat disesuaikan.</li>
-            <li>Mengambil data candlestick dan volume pasar.</li>
-            <li>Integrasi dengan OKX API untuk trading otomatis.</li>
-        </ul>
-
-        <h2>Instalasi</h2>
-        <pre><code>git clone https://github.com/CZ-A/AIPSARG.git
+</body>
+    </html>
