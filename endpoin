@@ -1,45 +1,22 @@
 # http header
 API_URL = 'https://www.okx.com'
+
 CONTENT_TYPE = 'Content-Type'
-OK_ACCESS_KEY = 'API_KEY'
-OK_ACCESS_SIGN = 'API_SECRET'
+OK_ACCESS_KEY = 'OK-ACCESS-KEY'
+OK_ACCESS_SIGN = 'OK-ACCESS-SIGN'
 OK_ACCESS_TIMESTAMP = 'OK-ACCESS-TIMESTAMP'
-OK_ACCESS_PASSPHRASE = 'PASSWORD'
+OK_ACCESS_PASSPHRASE = 'OK-ACCESS-PASSPHRASE'
+
 ACEEPT = 'Accept'
 COOKIE = 'Cookie'
 LOCALE = 'Locale='
+
 APPLICATION_JSON = 'application/json'
+
 GET = "GET"
 POST = "POST"
+
 SERVER_TIMESTAMP_URL = '/api/v5/public/time'
-
-# === Konfigurasi Api OpenAI ====
-OPENAI_API_KEY=example
-# === Konfigurasi Gemini API  ===
-GOOGLE_API_KEY=example
-
-# === Konfigurasi API Exchange ===
-API_KEY=example
-API_SECRET=example
-PASSWORD=example
-
-# === Pengaturan Trading ===
-PAIRS=CORE-USDT
-TIMEFRAME=1m
-LIMIT=1000
-MARGIN=1
-
-# === Parameter untuk PSAR ===
-DEFAULT_AF=0.025
-INCREMENT=0.025
-MAX_AF=0.2
-
-# === Pengaturan Risiko ===
-TAKE_PROFIT_PERCENTAGE=0.07
-STOP_LOSS_PERCENTAGE=0.03
-
-# === Interval Pemantauan Pasar (dalam detik) ===
-MONITOR_SLEEP_INTERVAL=1000000
 
 # account-complete-testcomplete
 POSITION_RISK='/api/v5/account/account-position-risk'
@@ -313,7 +290,7 @@ GET_PROFIT_SHARING_DETAILS = '/api/v5/copytrading/profit-sharing-details'
 GET_TOTAL_PROFIT_SHARING = '/api/v5/copytrading/total-profit-sharing'
 GET_UNREALIZED_PROFIT_SHARING_DETAILS = '/api/v5/copytrading/unrealized-profit-sharing-details'
 
-# Spread Trading˚
+# Spread Trading
 SPREAD_PLACE_ORDER= '/api/v5/sprd/order'
 SPREAD_CANCEL_ORDER = '/api/v5/sprd/cancel-order'
 SPREAD_CANCEL_ALL_ORDERS = '/api/v5/sprd/mass-cancel'
