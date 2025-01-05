@@ -9,11 +9,11 @@
 ![GitHub Pull Requests](https://img.shields.io/github/issues-pr/cz-a/AIPSARG)
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/cz-a/AIPSARG)
 
-Proyek Python untuk strategi PSAR dan trading otomatis menggunakan OKX API.
+Proyek Python untuk strategi gila dan trading otomatis menggunakan untuk sementara waktu di OKX API.
 
 ## Fitur Utama
-- Strategi PSAR dengan parameter yang dapat disesuaikan.
-- Pengambilan data candlestick dan volume pasar.
+- Strategi gila dengan parameter yang dapat disesuaikan.
+- Pengambilan data candlestick dan volume.
 - Integrasi dengan OKX API untuk trading otomatis.
 
 ## Instalasi
