@@ -15,18 +15,6 @@ from typing import Dict, Optional
 def generate_signature(timestamp: str, method: str, request_path: str, body: str) -> str:
     """
     Generates a signature for API requests.
-
-    Args:
-        timestamp (str): The timestamp of the request.
-        method (str): The HTTP method of the request (e.g., 'GET', 'POST').
-        request_path (str): The API endpoint path.
-        body (str): The request body.
-
-    Returns:
-        str: The generated signature.
-    
-    Raises:
-         Exception: If an error occurs during signature generation.
     """
     message = str(timestamp) + method + request_path + body
     mac = hmac.new(bytes(API_SECRET, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
@@ -36,19 +24,6 @@ def generate_signature(timestamp: str, method: str, request_path: str, body: str
 def make_request(method: str, path: str, params: Optional[Dict] = None, data: Optional[Dict] = None) -> Dict:
     """
     Makes a request to the OKX API.
-
-    Args:
-        method (str): The HTTP method of the request (e.g., 'GET', 'POST').
-        path (str): The API endpoint path.
-        params (Optional[Dict]): The query parameters for the request.
-        data (Optional[Dict]): The request body data.
-
-    Returns:
-        Dict: The JSON response from the API, or an empty dictionary if the request fails.
-    
-    Raises:
-        ValueError: If an invalid HTTP method is provided.
-        requests.exceptions.RequestException: If an error occurs during the request.
     """
     timestamp = str(int(time.time()))
     if params is None:
@@ -84,6 +59,33 @@ def make_request(method: str, path: str, params: Optional[Dict] = None, data: Op
          logging.error(f"Value Error: {e}")
          return {}
 
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
+def fetch_instrument_info(pair: str) -> Optional[Dict]:
+    """
+    Fetches instrument information from OKX for a specific trading pair.
+
+    Args:
+        pair (str): The trading pair symbol (e.g., 'BTC/USDT').
+
+    Returns:
+        Optional[Dict]: A dictionary containing instrument info, including minimum order size, or None if the request fails.
+    """
+    try:
+        path = "/api/v5/public/instruments"
+        params = {"instType": "SPOT", "instId": pair}
+        response = make_request("GET", path, params=params)
+
+        if response and response.get("data"):
+            instrument_data = response["data"][0]
+            min_size = instrument_data.get("minSz")
+            return {"min_size": min_size}
+        else:
+            logging.error(f"Failed to fetch instrument info for {pair}.")
+            return None
+    except Exception as e:
+        logging.error(f"Error fetching instrument info: {e}")
+        return None
+
 class ExchangeAPI:
     """A class to encapsulate interactions with the exchange API."""
 
@@ -98,28 +100,12 @@ class ExchangeAPI:
         self.exchange.load_markets()  # Load market data during initialization
     
     def get_exchange(self) -> ccxt.Exchange:
-        """Returns the ccxt exchange object.
-
-        Returns:
-            ccxt.Exchange: The ccxt exchange object.
-        """
+        """Returns the ccxt exchange object."""
         return self.exchange
     
     def place_order(self, pair: str, side: str, amount: float) -> Optional[Dict]:
         """
         Places an order on the exchange.
-
-        Args:
-            pair (str): The trading pair symbol (e.g., 'BTC/USDT').
-            side (str): The side of the order ('buy' or 'sell').
-            amount (float): The amount of the asset to order.
-
-        Returns:
-            Optional[Dict]: The order details from the API if successful, otherwise None.
-        
-        Raises:
-            ccxt.ExchangeError: If an error occurs during order placing.
-            Exception: If an unexpected error occurs during order placing.
         """
         try:
             order = self.exchange.create_order(pair, 'market', side, amount)
@@ -136,17 +122,6 @@ class ExchangeAPI:
     def fetch_candlesticks(self, pair: str, timeframe: str, limit: int) -> list:
         """
         Fetches candlestick data from the exchange.
-
-        Args:
-            pair (str): The trading pair symbol (e.g., 'BTC/USDT').
-            timeframe (str): The timeframe for the candlesticks (e.g., '1h').
-            limit (int): The number of candlesticks to fetch.
-
-        Returns:
-            list: A list of candlestick data from the API.
-
-        Raises:
-            Exception: If an error occurs during data fetching.
         """
         try:
             candles = self.exchange.fetch_ohlcv(pair, timeframe, limit=limit)
@@ -154,18 +129,35 @@ class ExchangeAPI:
         except Exception as e:
             logging.error(f"Error fetching candlesticks: {e}")
             raise
+    
+    def fetch_balance(self, pair:str) -> Dict:
+        """
+        Fetches the account balance from OKX and structures it.
         
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
-    # Example usage of ExchangeAPI
-    api = ExchangeAPI()
-    print(api.exchange.markets)
-    print(api.exchange.symbols)
-    # Sample data for make_request
-    sample_path = "/api/v5/market/tickers"
-    sample_params = {"instType": "SPOT"}
-    sample_response = make_request("GET",sample_path, sample_params)
-    if sample_response:
-        logging.info(f"Successfully fetched ticker data. Response: {sample_response}")
-    else:
-        logging.error("Failed to fetch ticker data")
+        Returns:
+            Dict: A dictionary containing the available balance, formatted as 'currency' and 'asset'.
+        """
+        try:
+            balance = self.exchange.fetch_balance()
+            if balance and 'free' in balance:
+                currency = "USDT"  # Assuming USDT is always the quote currency
+                asset = pair.split('/')[0]
+                free_currency = balance['free'].get(currency, 0.0)
+                free_asset = balance['free'].get(asset, 0.0)
+
+                return {
+                    "currency": {
+                        "name": currency,
+                        "available": free_currency
+                    },
+                     "asset": {
+                        "name": asset,
+                        "available": free_asset
+                    }
+                }
+            else:
+                logging.error("Could not retrieve balance or balance is empty")
+                return {}
+        except Exception as e:
+            logging.error(f"Error fetching balance: {e}")
+            return {}
