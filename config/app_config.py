@@ -3,11 +3,11 @@ import os
 from dotenv import load_dotenv
 import logging
 from typing import Dict
-from trading_bot.config.base_config import BaseConfig
-from trading_bot.config.validation import validate_config
+from aipsarg.config.base_config import BaseConfig
+from aipsarg.config.validation import validate_config
 
 # Load environment variables from .env file
-env_path = '/content/drive/MyDrive/lab.alice/.env'
+env_path = ''
 load_dotenv(env_path)
 
 class AppConfig(BaseConfig):
