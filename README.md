@@ -22,3 +22,59 @@ git clone https://github.com/cz-a/AIPSARG.git
 cd AIPSARG
 pip install -r requirements.txt
 python main.py
+
+** "AIPSARG" **
+
+1.  **Berdasarkan Metafora dan Simbol:**
+
+    *   **AIP (Artificial Intelligence Power):**
+        *   **A** (Apex): Menggambarkan puncak pencapaian dalam *trading*, kemampuan terbaik, atau teknologi tercanggih.
+        *   **I** (Insight): Menekankan kemampuan sistem untuk memberikan pemahaman yang mendalam tentang pasar.
+        *   **P** (Pathway): Memberi gambaran bahwa AI yang digunakan dapat memberikan jalan yang jelas dan terarah menuju kesuksesan dalam *trading*.
+    *   **SARG (Systematic and Reliable Grid):**
+        *   **S** (Strategy): Menunjukkan bahwa sistem ini tidak hanya reaktif, tetapi juga proaktif dalam merancang langkah-langkah trading yang terencana.
+        *   **A** (Adaptable): Menekankan pada kemampuan sistem untuk beradaptasi dengan perubahan pasar.
+        *   **R** (Resilient): Memberikan kesan bahwa sistem ini tahan terhadap berbagai kondisi pasar yang sulit.
+        *   **G** (Guidance): Mengimplikasikan bahwa sistem ini memandu *trader* menuju keputusan yang lebih baik melalui analisa grid system.
+    *   **AIPSARG (Gabungan):**
+        *   Menggambarkan harmoni antara kecerdasan buatan dan kekuatan sistem, dengan kombinasi antara kemampuan analisis yang canggih dengan *framework* yang terstruktur dan terpercaya.
+
+2.  **Berdasarkan Aspek Psikologis dan Emosional:**
+
+    *   **AIP:**
+        *   **A** (Assurance): Memberikan rasa aman dan percaya diri bagi *trader* dalam mengambil keputusan.
+        *   **I** (Intuitive): Menekankan pada kemampuan sistem untuk bekerja dengan cara yang alami dan intuitif.
+        *   **P** (Potential): Menunjukkan bahwa sistem ini dapat membantu *trader* mencapai potensi maksimal mereka.
+    *   **SARG:**
+        *   **S** (Security): Memberikan rasa aman dan nyaman dalam *trading*.
+        *   **A** (Autonomy): Memberdayakan *trader* dengan memberikan sistem otomatis yang dapat dipercaya.
+        *   **R** (Relief): Mengurangi kecemasan dan tekanan dalam proses *trading*.
+        *    **G** (Growth): Memberikan gambaran bahwa sistem ini dapat membantu *trader* untuk terus bertumbuh.
+    *   **AIPSARG (Gabungan):**
+        *   Menekankan pada kemudahan, keamanan, dan ketenangan pikiran yang ditawarkan oleh sistem ini dalam proses *trading*.
+
+3.  **Berdasarkan Sudut Pandang Pengguna:**
+
+    *   **AIP:**
+        *   **A** (Assistant): Bertindak sebagai asisten yang cerdas untuk membantu *trader*.
+        *   **I** (Improvement): Berfokus pada peningkatan efisiensi dan hasil *trading*.
+        *   **P** (Partner): Bertindak sebagai mitra yang dapat diandalkan dalam *trading*.
+    *   **SARG:**
+        *   **S** (Solution): Menawarkan solusi lengkap untuk masalah *trading*.
+        *   **A** (Automation): Menyediakan otomatisasi untuk mengurangi pekerjaan manual.
+        *   **R** (Results): Menghasilkan hasil yang positif dan terukur.
+        *   **G** (Gains): Menunjukkan potensi keuntungan yang dapat diperoleh dengan sistem ini.
+    *   **AIPSARG (Gabungan):**
+        *   Menawarkan solusi yang canggih, lengkap, dan mudah digunakan oleh *trader* dari semua tingkat keahlian.
+
+4.  **Berdasarkan Aspek Visual:**
+
+    *   **AIPSARG** dapat diartikan sebagai sebuah kode yang kompleks namun terstruktur dan solid.
+    *   Secara visual, nama ini juga menciptakan kesan sistem yang canggih.
+
+**Pesan yang Ingin Disampaikan:**
+
+*   **Kombinasi Kekuatan:** Menyampaikan pesan tentang kombinasi kekuatan AI dan keandalan sistem terstruktur.
+*   **Peningkatan Potensi:** Menunjukkan bahwa sistem ini dapat meningkatkan potensi *trader* dalam meraih hasil yang optimal.
+*   **Solusi Trading Modern:** Menggambarkan bahwa AIPSARG adalah solusi *trading* modern yang inovatif dan terpercaya.
+
