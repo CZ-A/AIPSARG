@@ -1,12 +1,12 @@
-# AIPSARG/data/data_handler.py
+# aipsarg/data/data_handler.py
 import pandas as pd
 import logging
 import numpy as np
-from trading_bot.api.api_utils import ExchangeAPI
-from trading_bot.config.config import TRADING_CONFIG, INDICATOR_CONFIG, MODEL_CONFIG
-from trading_bot.data.base_data import BaseData
-from trading_bot.data.feature_engineering import moving_average, rsi, macd, psar
-from trading_bot.transformers import DataTransformer
+from aipsarg.api.api_utils import ExchangeAPI
+from aipsarg.config.config import TRADING_CONFIG, INDICATOR_CONFIG, MODEL_CONFIG
+from aipsarg.data.base_data import BaseData
+from aipsarg.data.feature_engineering import moving_average, rsi, macd, psar
+from aipsarg.transformers import DataTransformer
 
 class DataHandler(BaseData):
     """A class to handle data fetching and processing."""
