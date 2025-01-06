@@ -57,13 +57,19 @@ class LSTMModel(BaseModel):
         Raises:
             Exception: If an error occurs during the training process.
         """
-        from trading_bot.data.data_utils import DataHandler
+        from aipsarg.data.data_utils import DataHandler
         try:
             logging.info("Starting model training.")
             data_handler = DataHandler()
             train_df = data_handler.fetch_okx_candlesticks(pair = pair,limit=training_limit)
-            train_df = data_handler.calculate_psar(train_df)
+            if train_df.empty:
+              logging.error("No data fetched for training model")
+              return False, None, None
+            train_df = data_handler.add_all_indicators(train_df, trading_style='swing_trading')
             X, y, scaler = data_handler.prepare_training_data(train_df)
+            if not X or not y or scaler is None:
+               logging.error("Failed to prepare data for training")
+               return False, None, None
             input_shape = (X.shape[1], X.shape[2])
             model = self.create_model(input_shape)
             history = model.fit(X, y, epochs=MODEL_CONFIG["EPOCHS"], batch_size=MODEL_CONFIG["BATCH_SIZE"], verbose=1, validation_split=0.1)
@@ -206,7 +212,7 @@ class LSTMModel(BaseModel):
         Raises:
             Exception: If an error occurs during the prediction.
         """
-        from trading_bot.data.data_utils import DataHandler
+        from aipsarg.data.data_utils import DataHandler
         try:
             if model is None or scaler is None:
                 logging.error("Model or scaler not loaded. Prediction cannot be made.")
