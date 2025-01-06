@@ -2,8 +2,8 @@
 import time,hmac,base64,hashlib,json,requests,ccxt,logging
 from typing import Dict, Optional
 from tenacity import retry, stop_after_attempt, wait_fixed
-from trading_bot.config.config import API_KEY, API_SECRET, PASSWORD
-from trading_bot.api.base_api import BaseAPI
+from aipsarg.config.config import API_KEY, API_SECRET, PASSWORD
+from aipsarg.api.base_api import BaseAPI
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
 def generate_signature(timestamp: str, method: str, request_path: str, body: str) -> str:
