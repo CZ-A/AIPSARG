@@ -1,23 +1,60 @@
-./CZ-A/AIPSARG/map
-├── main.py
+AIPSARG/
+├── api/
+│   ├── __init__.py
+│   ├── base_api.py
+│   ├── okx_api.py
+│   └── mock_api.py
+│
 ├── config/
 │   ├── __init__.py
-│   └── settings.py
+│   ├── base_config.py
+│   ├── app_config.py
+│   └── validation.py
+│
 ├── data/
 │   ├── __init__.py
-│   ├── fetcher.py
-│   ├── processor.py
-│   └── indicators.py
+│   ├── base_data.py
+│   ├── data_handler.py
+│   ├── feature_engineering/
+│   │   ├── __init__.py
+│   │   ├── base_indicator.py
+│   │   ├── moving_average.py
+│   │   ├── rsi.py
+│   │   ├── macd.py
+│   │   └── psar.py
+│   └── transformers.py
+│
 ├── model/
 │   ├── __init__.py
+│   ├── base_model.py
 │   ├── lstm_model.py
-│   └── trainer.py
+│   ├── model_manager.py
+│   └── metrics.py
+│
+├── bot/
+│   ├── __init__.py
+│   ├── base_bot.py
+│   ├── trading_ai.py
+│   ├── risk_management.py
+│   ├── portfolio_manager.py
+│   └── execution_handler.py
+│
 ├── strategy/
 │   ├── __init__.py
-│   ├── trade.py
-│   └── monitor.py
+│   ├── base_strategy.py
+│   ├── moving_average_crossover.py
+│   └── rsi_strategy.py
+│
 ├── utils/
 │   ├── __init__.py
 │   ├── logger.py
-│   └── retry_decorator.py
-└── .env
+│   └── helpers.py
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_api.py
+│   ├── test_data.py
+│   └── test_bot.py
+│
+├── main.py
+└── requirements.txt
