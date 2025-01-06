@@ -1,4 +1,4 @@
-# AIPSARG/api/okx_api.py
+# aipsarg/api/okx_api.py
 import time,hmac,base64,hashlib,json,requests,ccxt,logging
 from typing import Dict, Optional
 from tenacity import retry, stop_after_attempt, wait_fixed
@@ -35,7 +35,11 @@ class OKXAPI(BaseAPI):
          self.exchange = ccxt.okx({'apiKey': API_KEY,'secret': API_SECRET,'password': PASSWORD,'enableRateLimit': True}); self.exchange.load_markets()
 
     def make_request(self, method: str, path: str, params: Optional[Dict] = None, data: Optional[Dict] = None) -> Dict:
-        return make_request(method, path, params, data)
+         try:
+            return make_request(method, path, params, data)
+         except Exception as e:
+            logging.error(f"Error make request: {e}")
+            return {}
     
     def fetch_candlesticks(self, pair: str, timeframe: str, limit: int) -> list:
          try:
