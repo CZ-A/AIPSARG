@@ -1,4 +1,4 @@
-# aipsarg/ai/trading_ai.py
+# aipsarg/bot/trading_ai.py
 import time
 import logging
 import json
@@ -13,6 +13,7 @@ import threading
 from aipsarg.strategy.base_strategy import BaseStrategy, TradingStyle
 from aipsarg.strategy.moving_average_crossover import MovingAverageCrossover
 from aipsarg.utils.logger import setup_logger
+from aipsarg.utils.helpers import is_market_open
 
 # Setup logger
 logger = setup_logger(__name__)
@@ -32,13 +33,16 @@ class TradingAI:
         self.trading_strategy = trading_strategy
 
     def _initialize_min_size(self):
-          """Initializes the minimum order size."""
+        """Initializes the minimum order size."""
+        try:
           instrument_info = fetch_instrument_info(PAIRS)
           if instrument_info and 'min_size' in instrument_info:
                self.min_size = float(instrument_info['min_size'])
                logger.info(f"Minimum order size for {PAIRS} set to {self.min_size}")
           else:
                logger.error(f"Failed to fetch or set minimum order size for {PAIRS}")
+        except Exception as e:
+             logger.error(f"Error initialize min size: {e}")
 
     def _load_ai_state(self):
         """Loads the AI state from file."""
@@ -51,38 +55,55 @@ class TradingAI:
                     "action": None,
                     "amount": 0.0
                     }
+        except Exception as e:
+            logger.error(f"Error load ai state: {e}")
+            return {
+                    "purchase_price": 0.0,
+                    "action": None,
+                    "amount": 0.0
+                    }
     
     def _save_ai_state(self):
         """Saves the AI state to file."""
-        with open(TRADING_CONFIG["BOT_STATE_FILE"], "w") as f:
-            json.dump(self.ai_state, f)
+        try:
+          with open(TRADING_CONFIG["BOT_STATE_FILE"], "w") as f:
+             json.dump(self.ai_state, f)
+        except Exception as e:
+            logger.error(f"Error saving ai state: {e}")
 
     def check_take_profit_stop_loss(self, df, pair, action, purchase_price, amount):
         """Checks for take profit and stop loss conditions."""
-        current_price = df['close'].iloc[-1]
-        take_profit_price = purchase_price * (1 + TRADING_CONFIG["TAKE_PROFIT_PERCENTAGE"])
-        stop_loss_price = purchase_price * (1 - TRADING_CONFIG["STOP_LOSS_PERCENTAGE"])
-        
-        if action == 'buy':
-            if current_price >= take_profit_price or current_price <= stop_loss_price:
-                order = self.api.place_order(pair, 'sell', amount)
-                if order:
-                    logger.info(f"Action triggered for BUY. Selling {amount} of {pair} at {current_price}.")
-                    self.ai_state["action"] = None
-                    self._save_ai_state()
-        elif action == 'sell':
-            if current_price <= stop_loss_price or current_price >= take_profit_price:
-                order = self.api.place_order(pair, 'buy', amount)
-                if order:
-                    logger.info(f"Action triggered for SELL. Buying back {amount} of {pair} at {current_price}.")
-                    self.ai_state["action"] = None
-                    self._save_ai_state()
-    
+        try:
+           current_price = df['close'].iloc[-1]
+           take_profit_price = purchase_price * (1 + TRADING_CONFIG["TAKE_PROFIT_PERCENTAGE"])
+           stop_loss_price = purchase_price * (1 - TRADING_CONFIG["STOP_LOSS_PERCENTAGE"])
+           
+           if action == 'buy':
+              if current_price >= take_profit_price or current_price <= stop_loss_price:
+                  order = self.api.place_order(pair, 'sell', amount)
+                  if order:
+                      logger.info(f"Action triggered for BUY. Selling {amount} of {pair} at {current_price}.")
+                      self.ai_state["action"] = None
+                      self._save_ai_state()
+           elif action == 'sell':
+               if current_price <= stop_loss_price or current_price >= take_profit_price:
+                   order = self.api.place_order(pair, 'buy', amount)
+                   if order:
+                       logger.info(f"Action triggered for SELL. Buying back {amount} of {pair} at {current_price}.")
+                       self.ai_state["action"] = None
+                       self._save_ai_state()
+        except Exception as e:
+            logger.error(f"Error check take profit and stop loss: {e}")
+
     def trading_strategy(self, df, pair, model, scaler, trading_style):
         """Executes the trading strategy."""
         try:
             # 1. Data Pasar dan Indikator
             df = self.data_handler.add_all_indicators(df, trading_style=trading_style)
+            if df.empty:
+                logger.warning("Cannot proceed trading, data is empty")
+                self.display_summary(df, pair)
+                return
             columns_to_scale = ['close', 'volume','psar','ma_20','ema_20','macd', 'signal_line', 'macd_histogram','rsi', '%k', '%d',
                      'bollinger_upper', 'bollinger_lower', 'atr', 'adx', 'obv', 'pivot', 'r1', 's1', 'r2', 's2', 'price_sentiment']
             df = self.data_handler.standardize_data(df, columns_to_scale=columns_to_scale)
@@ -94,6 +115,10 @@ class TradingAI:
             
             # 2. Prediksi Model
             prediction = self.model_manager.predict_price(df, model, scaler)
+            if prediction == -1 :
+                logger.warning("Cannot proceed trading, error prediction")
+                self.display_summary(df, pair)
+                return #stop trading jika error prediksi
 
             # 3. Sinyal Trading (menggabungkan prediksi dan indikator)
             signal = self._generate_trading_signal(df, prediction)
@@ -159,7 +184,11 @@ class TradingAI:
     
     def _generate_trading_signal(self, df, prediction):
          """Generates trading signal based on indicators and prediction."""
-         return self.trading_strategy.generate_signal(df=df)
+         try:
+            return self.trading_strategy.generate_signal(df=df)
+         except Exception as e:
+             logger.error(f"Error generate trading signal: {e}")
+             return None
     
     def monitor_market(self, pair, model, scaler):
         """Monitors the market and executes trading strategy."""
@@ -169,6 +198,9 @@ class TradingAI:
                 df = self.data_handler.fetch_okx_candlesticks(pair)
                 if df is not None:
                     df = self.data_handler.add_all_indicators(df, trading_style=self.trading_strategy.get_trading_style().value)
+                    if df.empty:
+                         logger.warning("Cannot proceed monitoring, data is empty")
+                         continue
                     df = self.data_handler.calculate_psar(df)
                     self.trading_strategy(df, pair, model, scaler, trading_style = self.trading_strategy.get_trading_style().value )
                 else:
@@ -217,20 +249,23 @@ class TradingAI:
     def run(self):
         """Runs the trading AI."""
         try:
-            print("=== AIPSARG Auto-Trading Dimulai ===")
+           if not is_market_open():
+              logger.info("Market is close, waiting for market to open")
+              return
+           print("=== A1PSARG Auto-Trading Dimulai ===")
 
-            # Cek apakah model sudah ada, jika tidak, latih model
-            model, scaler = self.model_manager.load_trained_model()
-            if model is None or scaler is None:
-                logger.info("Model file not found. Training model...")
-                model_trained, model, scaler = self.model_manager.train_model(pair = PAIRS)
-                if not model_trained:
-                     print("Model failed to trained")
-                     return
+           # Cek apakah model sudah ada, jika tidak, latih model
+           model, scaler = self.model_manager.load_trained_model()
+           if model is None or scaler is None:
+              logger.info("Model file not found. Training model...")
+              model_trained, model, scaler = self.model_manager.train_model(pair = PAIRS)
+              if not model_trained:
+                  print("Model failed to trained")
+                  return
 
-            with ThreadPoolExecutor() as executor:
-                 self._stop_monitoring.clear()
-                 executor.submit(self.monitor_market, PAIRS, model, scaler)
+           with ThreadPoolExecutor() as executor:
+                self._stop_monitoring.clear()
+                executor.submit(self.monitor_market, PAIRS, model, scaler)
             
         except KeyboardInterrupt:
              self._stop_monitoring.set()
