@@ -1,5 +1,5 @@
 # AIPSARG/api/mock_api.py
-from trading_bot.api.base_api import BaseAPI
+from aisarg.api.base_api import BaseAPI
 from typing import Dict, Optional
 
 class MockAPI(BaseAPI):
