@@ -1,0 +1,8 @@
+requests
+ccxt
+pandas
+numpy
+tensorflow
+python-dotenv
+scikit-learn
+tenacity
