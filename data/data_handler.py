@@ -5,7 +5,7 @@ import numpy as np
 from aipsarg.api.api_utils import ExchangeAPI
 from aipsarg.config.config import TRADING_CONFIG, INDICATOR_CONFIG, MODEL_CONFIG
 from aipsarg.data.base_data import BaseData
-from aipsarg.data.feature_engineering import moving_average, rsi, macd, psar
+from aipsarg.feature_engineering import moving_average, rsi, macd, psar
 from aipsarg.transformers import DataTransformer
 
 class DataHandler(BaseData):
@@ -35,7 +35,7 @@ class DataHandler(BaseData):
             return df
         except Exception as e:
             logging.error(f"Error fetching candlesticks: {e}")
-            raise
+            return pd.DataFrame()
     
     def add_all_indicators(self, df: pd.DataFrame, trading_style: str) -> pd.DataFrame:
         """Adds all technical indicators based on trading style."""
@@ -63,6 +63,7 @@ class DataHandler(BaseData):
             atr_window = INDICATOR_CONFIG["DAY_TRADING_ATR_WINDOW"]
             adx_window = INDICATOR_CONFIG["DAY_TRADING_ADX_WINDOW"]
             sentiment_window = INDICATOR_CONFIG["DAY_TRADING_SENTIMENT_WINDOW"]
+            
         elif trading_style == 'swing_trading':
             ma_window = INDICATOR_CONFIG["SWING_TRADING_MA_WINDOW"]
             ema_window = INDICATOR_CONFIG["SWING_TRADING_EMA_WINDOW"]
@@ -74,6 +75,7 @@ class DataHandler(BaseData):
             atr_window = INDICATOR_CONFIG["SWING_TRADING_ATR_WINDOW"]
             adx_window = INDICATOR_CONFIG["SWING_TRADING_ADX_WINDOW"]
             sentiment_window = INDICATOR_CONFIG["SWING_TRADING_SENTIMENT_WINDOW"]
+            
         elif trading_style == 'long_term':
             ma_window = INDICATOR_CONFIG["LONG_TERM_MA_WINDOW"]
             ema_window = INDICATOR_CONFIG["LONG_TERM_EMA_WINDOW"]
@@ -87,19 +89,22 @@ class DataHandler(BaseData):
             sentiment_window = INDICATOR_CONFIG["LONG_TERM_SENTIMENT_WINDOW"]
         else:
             logging.error("Invalid trading style.")
-            return df
-        
-        df = psar.PSAR().calculate(df)
-        df = moving_average.MovingAverage(window=ma_window).calculate(df)
-        df = moving_average.MovingAverage(window=ema_window, column='close').calculate(df)
-        df = macd.MACD(short_window=macd_short_window, long_window=macd_long_window).calculate(df)
-        df = rsi.RSI(window=rsi_window).calculate(df)
-        df = rsi.StochasticOscillator(window=stochastic_window).calculate(df)
-        df = rsi.BollingerBands(window=bollinger_window).calculate(df)
-        df = rsi.ATR(window=atr_window).calculate(df)
-        df = rsi.ADX(window=adx_window).calculate(df)
-        df = rsi.PriceSentiment(window=sentiment_window).calculate(df)
-        return df
+            return pd.DataFrame()
+        try:
+           df = psar.PSAR().calculate(df)
+           df = moving_average.MovingAverage(window=ma_window).calculate(df)
+           df = moving_average.MovingAverage(window=ema_window, column='close').calculate(df)
+           df = macd.MACD(short_window=macd_short_window, long_window=macd_long_window).calculate(df)
+           df = rsi.RSI(window=rsi_window).calculate(df)
+           df = rsi.StochasticOscillator(window=stochastic_window).calculate(df)
+           df = rsi.BollingerBands(window=bollinger_window).calculate(df)
+           df = rsi.ATR(window=atr_window).calculate(df)
+           df = rsi.ADX(window=adx_window).calculate(df)
+           df = rsi.PriceSentiment(window=sentiment_window).calculate(df)
+           return df
+        except Exception as e:
+            logging.error(f"Error calculating indicators {e}")
+            return pd.DataFrame()
 
     def prepare_training_data(self, df: pd.DataFrame, scaler: object = None) -> tuple:
         """
@@ -112,25 +117,29 @@ class DataHandler(BaseData):
         Returns:
             tuple: A tuple containing scaled features (X), target labels (y), and the scaler.
         """
-        df = df[['open', 'high', 'low', 'close', 'volume', 'psar']].copy()
-        df['target'] = (df['close'].shift(-1) > df['close']).astype(int)
-        df.dropna(inplace=True)
-        if scaler is None:
-            scaler = MinMaxScaler(feature_range=(0, 1))
-            scaled_data = scaler.fit_transform(df.drop('target', axis=1).values)
-        else:
-            scaled_data = scaler.transform(df.drop('target', axis=1).values)
-        X, y = [], []
-        sequence_length = MODEL_CONFIG["SEQUENCE_LENGTH"]
-        for i in range(len(scaled_data) - sequence_length):
-            X.append(scaled_data[i:i+sequence_length])
-            y.append(df['target'].iloc[i+sequence_length])
-        X = np.array(X)
-        y = np.array(y)
-        return X, y, scaler
+        try:
+            df = df[['open', 'high', 'low', 'close', 'volume', 'psar']].copy()
+            df['target'] = (df['close'].shift(-1) > df['close']).astype(int)
+            df.dropna(inplace=True)
+            if scaler is None:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                scaled_data = scaler.fit_transform(df.drop('target', axis=1).values)
+            else:
+                scaled_data = scaler.transform(df.drop('target', axis=1).values)
+            X, y = [], []
+            sequence_length = MODEL_CONFIG["SEQUENCE_LENGTH"]
+            for i in range(len(scaled_data) - sequence_length):
+                X.append(scaled_data[i:i+sequence_length])
+                y.append(df['target'].iloc[i+sequence_length])
+            X = np.array(X)
+            y = np.array(y)
+            return X, y, scaler
+        except Exception as e:
+            logging.error(f"Error prepare training data: {e}")
+            return [],[],None
 
     def prepare_data_for_model(self, df: pd.DataFrame, sequence_length: int = MODEL_CONFIG["SEQUENCE_LENGTH"], scaler :object = None) -> pd.DataFrame :
-        """
+         """
         Prepares data for model prediction.
 
         Args:
@@ -141,12 +150,12 @@ class DataHandler(BaseData):
         Returns:
             np.ndarray: The prepared data for the model.
         """
-        try:
+         try:
             df_copy = df[['open', 'high', 'low', 'close', 'volume', 'psar']].copy()
             if len(df_copy) < sequence_length:
                 logging.warning(f"Not enough data to prepare for model. Returning the last available data.")
                 return None
             return df_copy.tail(sequence_length)
-        except Exception as e:
-            logging.error(f"Error preparing data for model: {e}")
-            return None
+         except Exception as e:
+             logging.error(f"Error preparing data for model: {e}")
+             return None
