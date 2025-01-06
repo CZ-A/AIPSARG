@@ -2,7 +2,7 @@ import time
 import logging
 import json
 from config.config import PAIRS, TRADING_CONFIG, INDICATOR_CONFIG
-from api.api_utils import ExchangeAPI
+from api.api_utils import ExchangeAPI, fetch_instrument_info
 from data.data_utils import DataHandler
 from model.model_utils import ModelManager
 import os
@@ -20,7 +20,18 @@ class TradingAI:
         self.model_manager = ModelManager()
         self.ai_state = self._load_ai_state()
         self._stop_monitoring = threading.Event()
-    
+        self.min_size = None  # Initialize min_size here
+        self._initialize_min_size() # Get min size
+
+    def _initialize_min_size(self):
+          """Initializes the minimum order size."""
+          instrument_info = fetch_instrument_info(PAIRS)
+          if instrument_info and 'min_size' in instrument_info:
+               self.min_size = float(instrument_info['min_size'])
+               logging.info(f"Minimum order size for {PAIRS} set to {self.min_size}")
+          else:
+               logging.error(f"Failed to fetch or set minimum order size for {PAIRS}")
+
     def _load_ai_state(self):
         """Loads the AI state from file."""
         try:
@@ -83,31 +94,36 @@ class TradingAI:
                 return
 
             # 4. Perhitungan Profit/Stop Loss & Eksekusi
-            balance = self.api.get_exchange().fetch_balance()
-            free_usdt = balance['free']['USDT']
-            free_stock = balance['free'].get(pair.split('/')[0], 0.0)
-
+            balance = self.api.fetch_balance(pair)
+            
+            if not balance or 'currency' not in balance or 'asset' not in balance:
+                logging.error("Could not retrieve balance information.")
+                return
+            
+            free_usdt = balance['currency']['available']
+            free_stock = balance['asset']['available']
+           
             if signal == 'buy' and free_usdt > 0:
                 amount_to_buy = free_usdt * TRADING_CONFIG["BUY_PERCENTAGE"]
                 price = df['close'].iloc[-1]
                 amount_to_buy_stock = amount_to_buy / price
-                if amount_to_buy_stock > TRADING_CONFIG["MINIMUM_ORDER_AMOUNT"]:  # Ganti <minimum_amount> dengan nilai minimum order
+                if self.min_size is not None and amount_to_buy_stock >= self.min_size:  # Check against minimum order size
                    order = self.api.place_order(pair, 'buy', amount_to_buy_stock)
                    if order:
                        self._log_trade_decision(df, prediction, 'buy', pair)
                        self.check_take_profit_stop_loss(df, pair, 'buy', price, amount_to_buy_stock)
                 else:
-                    logging.warning(f"Amount to buy {amount_to_buy_stock} too small, minimum amount is {TRADING_CONFIG['MINIMUM_ORDER_AMOUNT']}")
+                     logging.warning(f"Amount to buy {amount_to_buy_stock} too small, minimum amount is {self.min_size}")
 
             elif signal == 'sell' and free_stock > 0:
                 amount_to_sell = free_stock * TRADING_CONFIG["SELL_PERCENTAGE"]
-                if amount_to_sell > TRADING_CONFIG["MINIMUM_ORDER_AMOUNT"]:  # Ganti <minimum_amount> dengan nilai minimum order
+                if self.min_size is not None and amount_to_sell >= self.min_size:  # Check against minimum order size
                     order = self.api.place_order(pair, 'sell', amount_to_sell)
                     if order:
                         self._log_trade_decision(df, prediction, 'sell', pair)
                         self.check_take_profit_stop_loss(df, pair, 'sell', df['close'].iloc[-1], amount_to_sell)
                 else:
-                    logging.warning(f"Amount to sell {amount_to_sell} too small, minimum amount is {TRADING_CONFIG['MINIMUM_ORDER_AMOUNT']}")
+                    logging.warning(f"Amount to sell {amount_to_sell} too small, minimum amount is {self.min_size}")
 
             self.display_summary(df, pair)
         
@@ -187,12 +203,30 @@ class TradingAI:
             summary = df[['timestamp', 'open', 'high', 'low', 'close', 'psar']].tail(5)
             print("\n=== Ringkasan Data Terbaru ===")
             print(summary.to_string(index=False))
-            balance = self.api.get_exchange().fetch_balance()
-            free_usdt = balance['free']['USDT']
-            free_stock = balance['free'].get(pair.split('/')[0], 0.0)
+
+            balance = self.api.fetch_balance(pair)
+            if not balance or 'currency' not in balance or 'asset' not in balance:
+                 logging.error("Could not retrieve balance for summary.")
+                 return
+            
+            free_usdt = balance['currency']['available']
+            free_stock = balance['asset']['available']
+            current_price = df['close'].iloc[-1]
+            
+            # Calculate PnL (Profit and Loss)
+            if self.ai_state["action"] == 'buy' and self.ai_state["purchase_price"] > 0:
+                 purchase_price = self.ai_state["purchase_price"]
+                 pnl = (current_price - purchase_price) * self.ai_state["amount"]
+                 pnl_percentage = (pnl / (purchase_price * self.ai_state["amount"])) * 100
+            else:
+                pnl = 0.0
+                pnl_percentage = 0.0
+
             print("\n=== Status Akun ===")
             print(f"Saldo USDT: {free_usdt:.2f} USDT")
             print(f"Saldo {pair.split('/')[0]}: {free_stock:.2f} {pair.split('/')[0]}")
+            print(f"Potensi Untung/Rugi: {pnl:.2f} USDT ({pnl_percentage:.2f}%)")
+
         except Exception as e:
             logging.error(f"Error displaying summary: {e}") 
 
