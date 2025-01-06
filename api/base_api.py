@@ -1,4 +1,4 @@
-# AIPSARG/api/base_api.py
+# aipsarg/api/base_api.py
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
 
