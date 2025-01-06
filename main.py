@@ -1,6 +1,6 @@
 # aipsarg/main.py
 import logging
-from aipsarg.bot.trading_ai import TradingAI
+from aipsarg.ai.trading_ai import TradingAI
 from aipsarg.config.app_config import AppConfig
 from aipsarg.utils.logger import setup_logger
 
