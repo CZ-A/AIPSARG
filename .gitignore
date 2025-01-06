@@ -1,0 +1,56 @@
+# Direktori Virtual Environment
+.venv/
+env/
+venv/
+
+# File atau direktori cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# File log
+*.log
+*.out
+*.err
+
+# File environment atau konfigurasi lokal
+.env
+.env.*
+*.env
+
+# File database
+*.sqlite3
+*.db
+
+# File atau direktori IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Direktori atau file build Python
+build/
+dist/
+*.egg-info/
+
+# Paket wheel
+*.whl
+
+# File atau direktori coverage
+.coverage
+htmlcov/
+.coverage.*
+
+# File pengujian (test)
+.cache/
+.tox/
+
+# File debug
+debug.log
+
+# Lainnya
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
