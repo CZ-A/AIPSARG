@@ -1,60 +1,60 @@
-AIPSARG/
+aipsarg/
 ├── api/
 │   ├── __init__.py
-│   ├── base_api.py
-│   ├── okx_api.py
-│   └── mock_api.py
+│   ├── base_api.py         # Abstract base class for API interactions
+│   ├── okx_api.py          # OKX API implementation
+│   └── mock_api.py         # Mock API for testing
 │
 ├── config/
 │   ├── __init__.py
-│   ├── base_config.py
-│   ├── app_config.py
-│   └── validation.py
+│   ├── base_config.py      # Abstract base class for configuration
+│   ├── app_config.py       # Application configuration
+│   └── validation.py       # Configuration validation
 │
 ├── data/
 │   ├── __init__.py
-│   ├── base_data.py
-│   ├── data_handler.py
-│   ├── feature_engineering/
+│   ├── base_data.py        # Abstract base class for data handling
+│   ├── data_handler.py     # Data fetching and processing
+│   ├── feature_engineering/ # Feature engineering methods
 │   │   ├── __init__.py
-│   │   ├── base_indicator.py
-│   │   ├── moving_average.py
-│   │   ├── rsi.py
-│   │   ├── macd.py
-│   │   └── psar.py
-│   └── transformers.py
+│   │   ├── base_indicator.py    # Abstract base class for indicators
+│   │   ├── moving_average.py  # Moving average indicator
+│   │   ├── rsi.py            # RSI indicator
+│   │   ├── macd.py           # MACD indicator
+│   │   └── psar.py           # PSAR indicator
+│   └── transformers.py     # Data transformers (e.g., scaling)
 │
 ├── model/
 │   ├── __init__.py
-│   ├── base_model.py
-│   ├── lstm_model.py
-│   ├── model_manager.py
-│   └── metrics.py
+│   ├── base_model.py       # Abstract base class for models
+│   ├── lstm_model.py       # LSTM model implementation
+│   ├── model_manager.py    # Model management (train, load, predict)
+│   └── metrics.py          # Evaluation metrics
 │
-├── bot/
+├── ai/
 │   ├── __init__.py
-│   ├── base_bot.py
-│   ├── trading_ai.py
-│   ├── risk_management.py
-│   ├── portfolio_manager.py
-│   └── execution_handler.py
+│   ├── base_ai.py          # Abstract base class for bots
+│   ├── trading_ai.py       # Trading ai logic
+│   ├── risk_management.py  # Risk management rules
+│   ├── portfolio_manager.py # Portfolio tracking
+│   └── execution_handler.py # Order execution handling
 │
 ├── strategy/
-│   ├── __init__.py
-│   ├── base_strategy.py
-│   ├── moving_average_crossover.py
-│   └── rsi_strategy.py
+│    ├── __init__.py
+│    ├── base_strategy.py   # Abstract base class for trading strategies
+│    ├── moving_average_crossover.py # Moving average crossover strategy
+│    └── rsi_strategy.py        # RSI strategy
 │
 ├── utils/
 │   ├── __init__.py
-│   ├── logger.py
-│   └── helpers.py
+│   ├── logger.py           # Customized logger
+│   └── helpers.py          # Generic helper functions
 │
-├── tests/
-│   ├── __init__.py
-│   ├── test_api.py
-│   ├── test_data.py
-│   └── test_bot.py
+├── tests/                # (Optional) Directory for test files
+│    ├── __init__.py
+│    ├── test_api.py
+│    ├── test_data.py
+│    └── test_ai.py
 │
-├── main.py
-└── requirements.txt
+├── main.py                # Main entry point
+└── requirements.txt      # List of dependencies
