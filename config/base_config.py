@@ -1,4 +1,4 @@
-# trading_bot/config/base_config.py
+# aipsarg/config/base_config.py
 from abc import ABC, abstractmethod
 from typing import Dict
 
