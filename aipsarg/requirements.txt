@@ -1,8 +1,13 @@
-requests
-ccxt
 pandas
 numpy
 tensorflow
-python-dotenv
 scikit-learn
+python-dotenv
+PyNaCl
 tenacity
+retrying
+ta
+flake8
+autopep8
+black
+ccxt
