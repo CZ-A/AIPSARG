@@ -1,19 +1,19 @@
-# aipsarg/bot/trading_ai.py
+# aipsarg/ai/trading_ai.py
 import time
 import logging
 import json
-from aipsarg.config.config import PAIRS, TRADING_CONFIG
-from aipsarg.api.api_utils import ExchangeAPI, fetch_instrument_info
-from aipsarg.data.data_utils import DataHandler
-from aipsarg.model.model_utils import ModelManager
+from config.config import PAIRS, TRADING_CONFIG
+from api.api_utils import ExchangeAPI, fetch_instrument_info
+from data.data_utils import DataHandler
+from model.model_utils import ModelManager
 import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import threading
-from aipsarg.strategy.base_strategy import BaseStrategy, TradingStyle
-from aipsarg.strategy.moving_average_crossover import MovingAverageCrossover
-from aipsarg.utils.logger import setup_logger
-from aipsarg.utils.helpers import is_market_open
+from strategy.base_strategy import BaseStrategy, TradingStyle
+from strategy.moving_average_crossover import MovingAverageCrossover
+from utils.logger import setup_logger
+from utils.helpers import is_market_open
 
 # Setup logger
 logger = setup_logger(__name__)

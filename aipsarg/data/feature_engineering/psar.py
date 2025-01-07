@@ -1,6 +1,6 @@
 # aipsarg/data/feature_engineering/psar.py
 import pandas as pd
-from aipsarg.data.feature_engineering.base_indicator import BaseIndicator
+from data.feature_engineering.base_indicator import BaseIndicator
 
 
 class PSAR(BaseIndicator):

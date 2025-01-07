@@ -1,6 +1,6 @@
 # aipsarg/config/validation.py
 import logging
-from aipsarg.strategy.base_strategy import TradingStyle
+from strategy.base_strategy import TradingStyle
 
 def validate_config(config: dict) -> bool:
     """Validates if essential configuration variables are set."""

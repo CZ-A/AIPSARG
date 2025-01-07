@@ -1,8 +1,8 @@
 # aipsarg/strategy/moving_average_crossover.py
-from aipsarg.strategy.base_strategy import BaseStrategy, TradingStyle
+from strategy.base_strategy import BaseStrategy, TradingStyle
 import pandas as pd
 from typing import Optional
-from aipsarg.data.feature_engineering.moving_average import MovingAverage
+from data.feature_engineering.moving_average import MovingAverage
 
 
 class MovingAverageCrossover(BaseStrategy):

@@ -2,11 +2,11 @@
 import pandas as pd
 import logging
 import numpy as np
-from aipsarg.api.api_utils import ExchangeAPI
-from aipsarg.config.config import TRADING_CONFIG, INDICATOR_CONFIG, MODEL_CONFIG
-from aipsarg.data.base_data import BaseData
-from aipsarg.feature_engineering import moving_average, rsi, macd, psar
-from aipsarg.transformers import DataTransformer
+from api.api_utils import ExchangeAPI
+from config.config import TRADING_CONFIG, INDICATOR_CONFIG, MODEL_CONFIG
+from data.base_data import BaseData
+from feature_engineering import moving_average, rsi, macd, psar
+from transformers import DataTransformer
 
 class DataHandler(BaseData):
     """A class to handle data fetching and processing."""

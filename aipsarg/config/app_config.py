@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 import logging
 from typing import Dict
-from aipsarg.config.base_config import BaseConfig
-from aipsarg.config.validation import validate_config
+from config.base_config import BaseConfig
+from config.validation import validate_config
 
 # Load environment variables from .env file
 env_path = ''

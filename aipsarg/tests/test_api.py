@@ -1,7 +1,7 @@
 # aipsarg/tests/test_api.py
 import unittest
-from aipsarg.api.okx_api import OKXAPI
-from aipsarg.api.mock_api import MockAPI
+from api.okx_api import OKXAPI
+from api.mock_api import MockAPI
 
 class TestAPI(unittest.TestCase):
    

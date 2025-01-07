@@ -1,6 +1,6 @@
 # aipsarg/data/feature_engineering/moving_average.py
 import pandas as pd
-from aipsarg.data.feature_engineering.base_indicator import BaseIndicator
+from data.feature_engineering.base_indicator import BaseIndicator
 from typing import List
 class MovingAverage(BaseIndicator):
     """Concrete implementation of Moving Average indicator."""

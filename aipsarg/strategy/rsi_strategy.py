@@ -1,8 +1,8 @@
 # aipsarg/strategy/rsi_strategy.py
-from aipsarg.strategy.base_strategy import BaseStrategy, TradingStyle
+from strategy.base_strategy import BaseStrategy, TradingStyle
 import pandas as pd
 from typing import Optional
-from aipsarg.data.feature_engineering.rsi import RSI
+from data.feature_engineering.rsi import RSI
 
 class RSIStrategy(BaseStrategy):
     """Concrete implementation of RSI Strategy"""

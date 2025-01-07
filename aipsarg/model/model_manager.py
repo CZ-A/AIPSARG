@@ -3,10 +3,10 @@ import logging
 import numpy as np
 import json
 from typing import Tuple, Optional
-from aipsarg.model.base_model import BaseModel
-from aipsarg.config.config import MODEL_FILE, SCALER_FILE, PAIRS
-from aipsarg.data.data_utils import DataHandler
-from aipsarg.model.lstm_model import LSTMModel
+from model.base_model import BaseModel
+from config.config import MODEL_FILE, SCALER_FILE, PAIRS
+from data.data_utils import DataHandler
+from model.lstm_model import LSTMModel
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 

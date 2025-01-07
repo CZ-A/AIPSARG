@@ -1,6 +1,6 @@
 # aipsarg/data/feature_engineering/macd.py
 import pandas as pd
-from aipsarg.data.feature_engineering.base_indicator import BaseIndicator
+from data.feature_engineering.base_indicator import BaseIndicator
 
 class MACD(BaseIndicator):
     """Concrete implementation of Moving Average Convergence Divergence (MACD)."""

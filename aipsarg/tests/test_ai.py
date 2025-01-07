@@ -1,9 +1,9 @@
 # aipsarg/tests/test_ai.py
 import unittest
-from aipsarg.ai.trading_ai import TradingAI
-from aipsarg.api.mock_api import MockAPI
-from aipsarg.strategy.moving_average_crossover import MovingAverageCrossover
-from aipsarg.strategy.base_strategy import TradingStyle
+from ai.trading_ai import TradingAI
+from api.mock_api import MockAPI
+from strategy.moving_average_crossover import MovingAverageCrossover
+from strategy.base_strategy import TradingStyle
 import pandas as pd
 
 

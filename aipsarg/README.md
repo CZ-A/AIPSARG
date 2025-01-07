@@ -18,7 +18,7 @@ Proyek Python untuk strategi gila dan trading otomatis menggunakan untuk sementa
 
 ## Instalasi
 ```bash
-git clone https://github.com/cz-a/AIPSARG.git
+git clone https://github.com/cz-a/git
 cd AIPSARG
 pip install -r requirements.txt
 python main.py

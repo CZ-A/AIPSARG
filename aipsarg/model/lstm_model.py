@@ -8,8 +8,8 @@ from tensorflow.keras.layers import LSTM, Dense, Input
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import BinaryCrossentropy
 from sklearn.preprocessing import MinMaxScaler
-from aipsarg.config.config import MODEL_CONFIG
-from aipsarg.model.base_model import BaseModel
+from config.config import MODEL_CONFIG
+from model.base_model import BaseModel
 
 class LSTMModel(BaseModel):
     """Concrete implementation of LSTM Model."""
@@ -57,7 +57,7 @@ class LSTMModel(BaseModel):
         Raises:
             Exception: If an error occurs during the training process.
         """
-        from aipsarg.data.data_utils import DataHandler
+        from data.data_utils import DataHandler
         try:
             logging.info("Starting model training.")
             data_handler = DataHandler()
@@ -212,7 +212,7 @@ class LSTMModel(BaseModel):
         Raises:
             Exception: If an error occurs during the prediction.
         """
-        from aipsarg.data.data_utils import DataHandler
+        from data.data_utils import DataHandler
         try:
             if model is None or scaler is None:
                 logging.error("Model or scaler not loaded. Prediction cannot be made.")

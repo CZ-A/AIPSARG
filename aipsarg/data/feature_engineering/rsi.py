@@ -1,7 +1,7 @@
 # aipsarg/data/feature_engineering/rsi.py
 import pandas as pd
 import numpy as np
-from aipsarg.data.feature_engineering.base_indicator import BaseIndicator
+from data.feature_engineering.base_indicator import BaseIndicator
 
 class RSI(BaseIndicator):
     """Concrete implementation of Relative Strength Index (RSI)."""
