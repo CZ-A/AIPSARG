@@ -6,7 +6,7 @@ import json
 import requests
 import ccxt
 import logging
-from config.configs import API_KEY, API_SECRET, PASSWORD
+from configs.config import API_KEY, API_SECRET, PASSWORD
 from tenacity import retry, stop_after_attempt, wait_fixed
 from typing import Dict, Optional
 
