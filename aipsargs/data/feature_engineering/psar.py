@@ -1,4 +1,4 @@
-# aipsarg/data/feature_engineering/psar.py
+# aisarg/data/feature_engineering/psar.py
 import pandas as pd
 from data.feature_engineering.base_indicator import BaseIndicator
 
