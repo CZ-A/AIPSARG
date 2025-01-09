@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import logging
 
 # Load environment variables from .env file
-env_path = /../aipsarg-main/aipsargs/.env'
+env_path = '/../aipsarg-main/aipsargs/.env'
 load_dotenv(env_path)
 
 # --- API Configuration ---

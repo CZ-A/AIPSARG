@@ -2,7 +2,7 @@
 import time
 import logging
 import json
-from config.config import PAIRS, TRADING_CONFIG
+from configs.config import PAIRS, TRADING_CONFIG
 from api.api_utils import ExchangeAPI, fetch_instrument_info
 from data.data_utils import DataHandler
 from model.model_utils import ModelManager
