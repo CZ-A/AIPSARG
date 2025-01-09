@@ -181,9 +181,18 @@ class TradingAI:
         while not self._stop_monitoring.is_set():
            try:
                 logger.info("Monitoring market...")
-                df = self.data_handler.fetch_okx_candlesticks(pair)
+                timeframes = TRADING_CONFIG["TIMEFRAMES"]
+                market_data = self.data_handler.market_data.fetch_market_data(pair = pair, timeframes = timeframes)
+                
+                # Mengambil data berdasarkan timeframe yang di konfigurasi
+                if TRADING_CONFIG["TIMEFRAME"] in market_data:
+                    df = market_data[TRADING_CONFIG["TIMEFRAME"]]
+                else:
+                  logger.error(f"Timeframe {TRADING_CONFIG['TIMEFRAME']} not found in market data")
+                  continue
+                
                 if df is not None:
-                    self.trading_strategy(df, pair, model, scaler, trading_style = self.trading_strategy.get_trading_style().value )
+                   self.trading_strategy(df, pair, model, scaler, trading_style = self.trading_strategy.get_trading_style().value )
                 else:
                      logger.error("Failed to fetch candlestick data.")
            except Exception as e:
