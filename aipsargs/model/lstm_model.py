@@ -57,7 +57,7 @@ class LSTMModel(BaseModel):
         Raises:
             Exception: If an error occurs during the training process.
         """
-        from data.data_utils import DataHandler
+        from trading_bot.data.data_utils import DataHandler
         try:
             logging.info("Starting model training.")
             data_handler = DataHandler()
@@ -212,7 +212,7 @@ class LSTMModel(BaseModel):
         Raises:
             Exception: If an error occurs during the prediction.
         """
-        from data.data_utils import DataHandler
+        from trading_bot.data.data_utils import DataHandler
         try:
             if model is None or scaler is None:
                 logging.error("Model or scaler not loaded. Prediction cannot be made.")
