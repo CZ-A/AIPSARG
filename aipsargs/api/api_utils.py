@@ -1,3 +1,4 @@
+# aipsarg/api/api_utils.py
 import time
 import hmac
 import base64
@@ -6,10 +7,10 @@ import json
 import requests
 import ccxt
 import logging
-from configs.config import API_KEY, API_SECRET, PASSWORD
 from tenacity import retry, stop_after_attempt, wait_fixed
 from typing import Dict, Optional
 
+from aipsarg.config.config import API_KEY, API_SECRET, PASSWORD
 
 @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
 def generate_signature(timestamp: str, method: str, request_path: str, body: str) -> str:
