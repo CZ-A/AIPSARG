@@ -2,10 +2,9 @@
 import os
 from dotenv import load_dotenv
 import logging
-import json
 
 # Load environment variables from .env file
-env_path = '/../aipsarg-main/aipsargs/.env'
+env_path = /../aipsarg-main/aipsargs/.env'
 load_dotenv(env_path)
 
 # --- API Configuration ---
@@ -17,9 +16,9 @@ PASSWORD = os.getenv("PASSWORD")
 PAIRS = os.getenv("PAIRS","CORE/USDT")
 TRADING_CONFIG = {
     "MARGIN": int(os.getenv("MARGIN", 10)),
-    "TIMEFRAME": os.getenv("TIMEFRAME", '1m'),
+    "TIMEFRAME": os.getenv("TIMEFRAME", '3m'),
     "LIMIT": int(os.getenv("LIMIT", 100)),
-     "TIMEFRAMES":  json.loads(os.getenv("TIMEFRAMES", '{"1m": 100, "5m": 200}')),
+     "TIMEFRAMES":  json.loads(os.getenv("TIMEFRAMES", '{"3m": 100, "5m": 200}')),
     "MINIMUM_ORDER_AMOUNT": float(os.getenv("MINIMUM_ORDER_AMOUNT", 2)),
     "BUY_PERCENTAGE": float(os.getenv("BUY_PERCENTAGE", 0.2)),
     "SELL_PERCENTAGE": float(os.getenv("SELL_PERCENTAGE", 0.8)),
@@ -27,7 +26,7 @@ TRADING_CONFIG = {
     "TAKE_PROFIT_PERCENTAGE": float(os.getenv("TAKE_PROFIT_PERCENTAGE", 0.05)),
     "STOP_LOSS_PERCENTAGE": float(os.getenv("STOP_LOSS_PERCENTAGE", 0.03)),
     "MONITOR_SLEEP_INTERVAL": int(os.getenv("MONITOR_SLEEP_INTERVAL", 0)),
-    "BOT_STATE_FILE": "/content/drive/MyDrive/lab.alice/bot_state.json"
+    "BOT_STATE_FILE": "/content/drive/MyDrive/lab.alice/bot_state.json"  # Tambahkan BOT_STATE_FILE di sini
 }
 
 # --- Model Configuration ---
@@ -102,7 +101,7 @@ def validate_config():
     if TRADING_CONFIG["TRADING_STYLE"] not in valid_trading_styles:
         logging.error(f"Invalid TRADING_STYLE: {TRADING_CONFIG['TRADING_STYLE']}. Must be one of {valid_trading_styles}")
         return False
-    
+
     return True
 
 if __name__ == '__main__':
