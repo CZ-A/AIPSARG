@@ -7,6 +7,7 @@ from configs.config import TRADING_CONFIG, INDICATOR_CONFIG, MODEL_CONFIG
 from data.base_data import BaseData
 from feature_engineering import moving_average, rsi, macd, psar
 from transformers import DataTransformer
+from data.market_data import MarketData
 
 class DataHandler(BaseData):
     """A class to handle data fetching and processing."""
@@ -14,6 +15,7 @@ class DataHandler(BaseData):
         """Initializes the DataHandler with an ExchangeAPI instance."""
         self.api_handler = ExchangeAPI()
         self.data_transformer = DataTransformer()
+        self.market_data = MarketData()
     
     def fetch_okx_candlesticks(self, pair: str, timeframe: str = TRADING_CONFIG["TIMEFRAME"], limit: int = TRADING_CONFIG["LIMIT"]) -> pd.DataFrame:
         """
