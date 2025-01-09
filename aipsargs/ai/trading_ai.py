@@ -1,8 +1,8 @@
-# aipsarg/ai/trading_ai.py
+# ai/ai/trading_ai.py
 import time
 import logging
 import json
-from configs.config import PAIRS, TRADING_CONFIG
+from config.config import PAIRS, TRADING_CONFIG
 from api.api_utils import ExchangeAPI, fetch_instrument_info
 from data.data_utils import DataHandler
 from model.model_utils import ModelManager
@@ -10,10 +10,10 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import threading
-from trading_bot.strategy.base_strategy import BaseStrategy, TradingStyle
-from trading_bot.strategy.moving_average_crossover import MovingAverageCrossover
-from trading_bot.utils.logger import setup_logger
-from trading_bot.utils.helpers import is_market_open
+from strategy.base_strategy import BaseStrategy, TradingStyle
+from strategy.moving_average_crossover import MovingAverageCrossover
+from utils.logger import setup_logger
+from utils.helpers import is_market_open
 
 # Setup logger
 logger = setup_logger(__name__)
@@ -31,6 +31,8 @@ class TradingAI:
         self.min_size = None  # Initialize min_size here
         self._initialize_min_size() # Get min size
         self.trading_strategy = trading_strategy
+        self.previous_pair = None
+        self.previous_balance = None
 
     def _initialize_min_size(self):
         """Initializes the minimum order size."""
@@ -53,14 +55,18 @@ class TradingAI:
             return {
                     "purchase_price": 0.0,
                     "action": None,
-                    "amount": 0.0
+                    "amount": 0.0,
+                    "previous_pair": None,
+                    "previous_balance" : None
                     }
         except Exception as e:
             logger.error(f"Error load ai state: {e}")
             return {
                     "purchase_price": 0.0,
                     "action": None,
-                    "amount": 0.0
+                    "amount": 0.0,
+                    "previous_pair": None,
+                    "previous_balance": None
                     }
     
     def _save_ai_state(self):
@@ -167,6 +173,8 @@ class TradingAI:
                     logger.warning(f"Amount to sell {amount_to_sell} too small, minimum amount is {self.min_size}")
 
             self.display_summary(df, pair)
+            self._handle_balance_display(df, pair)
+            
         
         except Exception as e:
             logger.error(f"Error in strategy: {e}")
@@ -208,7 +216,25 @@ class TradingAI:
            except Exception as e:
                 logger.error(f"Error in market monitoring: {e}")
            time.sleep(TRADING_CONFIG["MONITOR_SLEEP_INTERVAL"])
-    
+
+    def _handle_balance_display(self, df, pair):
+         """Handles display of balance and PnL calculation."""
+         try:
+              if pair != self.ai_state["previous_pair"] and self.ai_state["previous_pair"] is not None:
+                self.display_summary(df, pair)
+                self.previous_pair = self.ai_state["previous_pair"]
+                self.previous_balance = self.ai_state["previous_balance"]
+                self.ai_state["previous_pair"] = pair
+                self._save_ai_state()
+
+              self.display_balance(df, pair)
+              self.ai_state["previous_balance"] = self.api.fetch_balance(pair)
+              self.ai_state["previous_pair"] = pair
+              self._save_ai_state()
+              
+         except Exception as e:
+              logger.error(f"Error handling balance display {e}")
+
     def display_summary(self, df, pair):
         """Displays summary of the latest data and account status."""
         try:
@@ -245,6 +271,45 @@ class TradingAI:
 
         except Exception as e:
             logger.error(f"Error displaying summary: {e}") 
+
+    def display_balance(self, df, pair):
+        """Displays the balance of the current trading pair and calculates PnL"""
+        try:
+            balance = self.api.fetch_balance(pair)
+            if not balance or 'currency' not in balance or 'asset' not in balance:
+                logger.error("Could not retrieve balance for display balance.")
+                return
+            
+            free_usdt = balance['currency']['available']
+            free_stock = balance['asset']['available']
+            current_price = df['close'].iloc[-1]
+            
+            # Calculate PnL (Profit and Loss)
+            pnl = 0.0
+            pnl_percentage = 0.0
+            if self.previous_balance and self.previous_pair == pair :
+               previous_free_usdt = self.previous_balance['currency']['available']
+               previous_free_stock = self.previous_balance['asset']['available']
+               asset_name = pair.split('/')[0]
+               
+               if self.ai_state["action"] == 'buy':
+                  pnl = (current_price * free_stock) - (previous_free_usdt + (previous_free_stock * current_price))
+                  pnl_percentage = (pnl / (previous_free_usdt + (previous_free_stock * current_price))) * 100
+               elif self.ai_state["action"] == 'sell':
+                   pnl = (previous_free_usdt + (previous_free_stock * current_price)) - (current_price * free_stock)
+                   pnl_percentage = (pnl / (current_price * free_stock)) * 100
+               else:
+                    pnl = 0.0
+                    pnl_percentage = 0.0
+                   
+            print("\n=== Balance ===")
+            print(f"Saldo USDT: {free_usdt:.2f} USDT")
+            print(f"Saldo {pair.split('/')[0]}: {free_stock:.2f} {pair.split('/')[0]}")
+            print(f"Potensi Untung/Rugi: {pnl:.2f} USDT ({pnl_percentage:.2f}%)")
+
+
+        except Exception as e:
+            logger.error(f"Error display balance: {e}")
 
     def run(self):
         """Runs the trading AI."""
