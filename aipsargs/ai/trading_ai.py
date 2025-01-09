@@ -1,4 +1,4 @@
-# ai/ai/trading_ai.py
+# aipsarg/ai/trading_ai.py
 import time
 import logging
 import json
@@ -12,6 +12,7 @@ from datetime import datetime
 import threading
 from strategy.base_strategy import BaseStrategy, TradingStyle
 from strategy.moving_average_crossover import MovingAverageCrossover
+from strategy.auto_strategy import AutoStrategy
 from utils.logger import setup_logger
 from utils.helpers import is_market_open
 
@@ -31,6 +32,7 @@ class TradingAI:
         self.min_size = None  # Initialize min_size here
         self._initialize_min_size() # Get min size
         self.trading_strategy = trading_strategy
+        self.auto_strategy = AutoStrategy(trading_style = self.trading_strategy.get_trading_style(), strategy=self.trading_strategy, data_handler=self.data_handler, model_manager=self.model_manager)
         self.previous_pair = None
         self.previous_balance = None
 
@@ -104,35 +106,12 @@ class TradingAI:
     def trading_strategy(self, df, pair, model, scaler, trading_style):
         """Executes the trading strategy."""
         try:
-            # 1. Data Pasar dan Indikator
-            df = self.data_handler.add_all_indicators(df, trading_style=trading_style)
-            if df.empty:
-                logger.warning("Cannot proceed trading, data is empty")
-                self.display_summary(df, pair)
-                return
-            columns_to_scale = ['close', 'volume','psar','ma_20','ema_20','macd', 'signal_line', 'macd_histogram','rsi', '%k', '%d',
-                     'bollinger_upper', 'bollinger_lower', 'atr', 'adx', 'obv', 'pivot', 'r1', 's1', 'r2', 's2', 'price_sentiment']
-            df = self.data_handler.standardize_data(df, columns_to_scale=columns_to_scale)
-            data_for_model = self.data_handler.prepare_data_for_model(df, scaler=scaler)
-            if data_for_model is None:
-                logger.warning("Cannot proceed trading, not enough data")
-                self.display_summary(df, pair)
-                return  # Stop trading jika tidak ada data
-            
-            # 2. Prediksi Model
-            prediction = self.model_manager.predict_price(df, model, scaler)
-            if prediction == -1 :
-                logger.warning("Cannot proceed trading, error prediction")
-                self.display_summary(df, pair)
-                return #stop trading jika error prediksi
+            # 1. Generate trading signal using AutoStrategy
+            signal = self.auto_strategy.generate_trading_signal(df = df, pair = pair)
 
-            # 3. Sinyal Trading (menggabungkan prediksi dan indikator)
-            signal = self._generate_trading_signal(df, prediction)
-            
             if signal is None:
-                return
-
-            # 4. Perhitungan Profit/Stop Loss & Eksekusi
+               return
+            # 2. Perhitungan Profit/Stop Loss & Eksekusi
             balance = self.api.fetch_balance(pair)
             
             if not balance or 'currency' not in balance or 'asset' not in balance:
@@ -149,7 +128,7 @@ class TradingAI:
                 if self.min_size is not None and amount_to_buy_stock >= self.min_size:  # Check against minimum order size
                    order = self.api.place_order(pair, 'buy', amount_to_buy_stock)
                    if order:
-                       self._log_trade_decision(df, prediction, 'buy', pair)
+                       self._log_trade_decision(df, 0, 'buy', pair) #prediction diganti 0, karena di handle pada auto strategy
                        self.check_take_profit_stop_loss(df, pair, 'buy', price, amount_to_buy_stock)
                        self.ai_state["action"] = 'buy'
                        self.ai_state["purchase_price"] = price
@@ -163,7 +142,7 @@ class TradingAI:
                 if self.min_size is not None and amount_to_sell >= self.min_size:  # Check against minimum order size
                     order = self.api.place_order(pair, 'sell', amount_to_sell)
                     if order:
-                        self._log_trade_decision(df, prediction, 'sell', pair)
+                        self._log_trade_decision(df, 0, 'sell', pair) #prediction diganti 0, karena di handle pada auto strategy
                         self.check_take_profit_stop_loss(df, pair, 'sell', df['close'].iloc[-1], amount_to_sell)
                         self.ai_state["action"] = 'sell'
                         self.ai_state["purchase_price"] = df['close'].iloc[-1]
@@ -174,7 +153,6 @@ class TradingAI:
 
             self.display_summary(df, pair)
             self._handle_balance_display(df, pair)
-            
         
         except Exception as e:
             logger.error(f"Error in strategy: {e}")
@@ -205,11 +183,6 @@ class TradingAI:
                 logger.info("Monitoring market...")
                 df = self.data_handler.fetch_okx_candlesticks(pair)
                 if df is not None:
-                    df = self.data_handler.add_all_indicators(df, trading_style=self.trading_strategy.get_trading_style().value)
-                    if df.empty:
-                         logger.warning("Cannot proceed monitoring, data is empty")
-                         continue
-                    df = self.data_handler.calculate_psar(df)
                     self.trading_strategy(df, pair, model, scaler, trading_style = self.trading_strategy.get_trading_style().value )
                 else:
                      logger.error("Failed to fetch candlestick data.")
