@@ -48,9 +48,16 @@ class OKXAPI(BaseAPI):
     
     def fetch_balance(self, pair:str) -> Dict:
         try:
-            balance = self.exchange.fetch_balance()
-            if balance and 'free' in balance:
-                currency = "USDT"; asset = pair.split('/')[0]; free_currency = balance['free'].get(currency, 0.0); free_asset = balance['free'].get(asset, 0.0)
-                return {"currency": {"name": currency,"available": free_currency},"asset": {"name": asset,"available": free_asset}}
-            else: logging.error("Could not retrieve balance or balance is empty"); return {}
+             balance = self.make_request(method="GET", path="/api/v5/account/balance")
+             if balance and balance.get('data'):
+                free_currency = 0.0
+                free_asset = 0.0
+                for item in balance.get('data')[0].get('details'):
+                   if item.get('ccy') == "USDT":
+                      free_currency = float(item.get('free'))
+                   if item.get('ccy') == pair.split('/')[0]:
+                      free_asset = float(item.get('free'))
+                return {"currency": {"name": "USDT","available": free_currency},"asset": {"name": pair.split('/')[0],"available": free_asset}}
+             else:
+                logging.error("Could not retrieve balance or balance is empty"); return {}
         except Exception as e: logging.error(f"Error fetching balance: {e}"); return {}
