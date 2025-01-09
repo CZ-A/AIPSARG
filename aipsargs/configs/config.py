@@ -1,9 +1,11 @@
+# aipsarg/configs/config.py
 import os
 from dotenv import load_dotenv
 import logging
+import json
 
 # Load environment variables from .env file
-env_path = '/content/drive/MyDrive/lab.alice/.env'
+env_path = '/../aipsarg-main/aipsargs/.env'
 load_dotenv(env_path)
 
 # --- API Configuration ---
@@ -17,6 +19,7 @@ TRADING_CONFIG = {
     "MARGIN": int(os.getenv("MARGIN", 10)),
     "TIMEFRAME": os.getenv("TIMEFRAME", '1m'),
     "LIMIT": int(os.getenv("LIMIT", 100)),
+     "TIMEFRAMES":  json.loads(os.getenv("TIMEFRAMES", '{"1m": 100, "5m": 200}')),
     "MINIMUM_ORDER_AMOUNT": float(os.getenv("MINIMUM_ORDER_AMOUNT", 2)),
     "BUY_PERCENTAGE": float(os.getenv("BUY_PERCENTAGE", 0.2)),
     "SELL_PERCENTAGE": float(os.getenv("SELL_PERCENTAGE", 0.8)),
@@ -24,7 +27,7 @@ TRADING_CONFIG = {
     "TAKE_PROFIT_PERCENTAGE": float(os.getenv("TAKE_PROFIT_PERCENTAGE", 0.05)),
     "STOP_LOSS_PERCENTAGE": float(os.getenv("STOP_LOSS_PERCENTAGE", 0.03)),
     "MONITOR_SLEEP_INTERVAL": int(os.getenv("MONITOR_SLEEP_INTERVAL", 0)),
-    "BOT_STATE_FILE": "/content/drive/MyDrive/lab.alice/bot_state.json"  # Tambahkan BOT_STATE_FILE di sini
+    "BOT_STATE_FILE": "/content/drive/MyDrive/lab.alice/bot_state.json"
 }
 
 # --- Model Configuration ---
@@ -81,9 +84,9 @@ INDICATOR_CONFIG = {
 }
 
 # --- File Paths ---
-MODEL_FILE = "/content/drive/MyDrive/lab.alice/model.h5"
-SCALER_FILE = "/content/drive/MyDrive/lab.alice/scaler.json"
-OUTPUT_DIR = "/content/drive/MyDrive/lab.alice"
+MODEL_FILE = "/../aipsarg-main/aipsargs/model.h5"
+SCALER_FILE = "/../aipsarg-main/aipsargs/scaler.json"
+OUTPUT_DIR = "/../aipsarg-main/aipsargs"
 
 def validate_config():
     """Validates if essential configuration variables are set."""
