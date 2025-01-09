@@ -2,8 +2,8 @@
 import logging
 import os
 from dotenv import load_dotenv
-from configs import Config
-from trading_ai import TradingAI
+from configs.config import TRADING_CONFIG
+from ai.trading_ai import TradingAI
 
 def setup_logging():
     logging.basicConfig(
