@@ -10,10 +10,10 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import threading
-from strategy.base_strategy import BaseStrategy, TradingStyle
-from strategy.moving_average_crossover import MovingAverageCrossover
-from utils.logger import setup_logger
-from utils.helpers import is_market_open
+from trading_bot.strategy.base_strategy import BaseStrategy, TradingStyle
+from trading_bot.strategy.moving_average_crossover import MovingAverageCrossover
+from trading_bot.utils.logger import setup_logger
+from trading_bot.utils.helpers import is_market_open
 
 # Setup logger
 logger = setup_logger(__name__)
