@@ -63,7 +63,6 @@ class DataHandler(BaseData):
             atr_window = INDICATOR_CONFIG["DAY_TRADING_ATR_WINDOW"]
             adx_window = INDICATOR_CONFIG["DAY_TRADING_ADX_WINDOW"]
             sentiment_window = INDICATOR_CONFIG["DAY_TRADING_SENTIMENT_WINDOW"]
-            
         elif trading_style == 'swing_trading':
             ma_window = INDICATOR_CONFIG["SWING_TRADING_MA_WINDOW"]
             ema_window = INDICATOR_CONFIG["SWING_TRADING_EMA_WINDOW"]
@@ -75,7 +74,6 @@ class DataHandler(BaseData):
             atr_window = INDICATOR_CONFIG["SWING_TRADING_ATR_WINDOW"]
             adx_window = INDICATOR_CONFIG["SWING_TRADING_ADX_WINDOW"]
             sentiment_window = INDICATOR_CONFIG["SWING_TRADING_SENTIMENT_WINDOW"]
-            
         elif trading_style == 'long_term':
             ma_window = INDICATOR_CONFIG["LONG_TERM_MA_WINDOW"]
             ema_window = INDICATOR_CONFIG["LONG_TERM_EMA_WINDOW"]
