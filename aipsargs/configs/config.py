@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import logging
 
 # Load environment variables from .env file
-env_path = '/../aipsarg-main/aipsargs/.env'
+env_path = '/workspaces/aipsarg/aipsargs/.env'
 load_dotenv(env_path)
 
 # --- API Configuration ---
@@ -84,9 +84,9 @@ INDICATOR_CONFIG = {
 }
 
 # --- File Paths ---
-MODEL_FILE = "/../aipsarg-main/aipsargs/model.h5"
-SCALER_FILE = "/../aipsarg-main/aipsargs/scaler.json"
-OUTPUT_DIR = "/../aipsarg-main/aipsargs"
+MODEL_FILE = "/workspaces/aipsarg/aipsargs/model.h5"
+SCALER_FILE = "/workspaces/aipsarg/aipsarges/scaler.pkl"
+OUTPUT_DIR = "/workspaces/aipsarg/aipsargs"
 
 def validate_config():
     """Validates if essential configuration variables are set."""
