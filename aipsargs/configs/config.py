@@ -1,11 +1,9 @@
-# aipsarg/configs/config.py
 import os
-import json
 from dotenv import load_dotenv
 import logging
 
 # Load environment variables from .env file
-env_path = '/workspaces/aipsarg/aipsargs/.env'
+env_path = '/../.env'
 load_dotenv(env_path)
 
 # --- API Configuration ---
@@ -17,9 +15,8 @@ PASSWORD = os.getenv("PASSWORD")
 PAIRS = os.getenv("PAIRS","CORE/USDT")
 TRADING_CONFIG = {
     "MARGIN": int(os.getenv("MARGIN", 10)),
-    "TIMEFRAME": os.getenv("TIMEFRAME", '3m'),
+    "TIMEFRAME": os.getenv("TIMEFRAME", '1m'),
     "LIMIT": int(os.getenv("LIMIT", 100)),
-     "TIMEFRAMES":  json.loads(os.getenv("TIMEFRAMES", '{"3m": 100, "5m": 200}')),
     "MINIMUM_ORDER_AMOUNT": float(os.getenv("MINIMUM_ORDER_AMOUNT", 2)),
     "BUY_PERCENTAGE": float(os.getenv("BUY_PERCENTAGE", 0.2)),
     "SELL_PERCENTAGE": float(os.getenv("SELL_PERCENTAGE", 0.8)),
@@ -84,9 +81,9 @@ INDICATOR_CONFIG = {
 }
 
 # --- File Paths ---
-MODEL_FILE = "/workspaces/aipsarg/aipsargs/model.h5"
-SCALER_FILE = "/workspaces/aipsarg/aipsarges/scaler.pkl"
-OUTPUT_DIR = "/workspaces/aipsarg/aipsargs"
+MODEL_FILE = "/../model.h5"
+SCALER_FILE = "/../scaler.json"
+OUTPUT_DIR = "/../lab.alice"
 
 def validate_config():
     """Validates if essential configuration variables are set."""
@@ -102,7 +99,7 @@ def validate_config():
     if TRADING_CONFIG["TRADING_STYLE"] not in valid_trading_styles:
         logging.error(f"Invalid TRADING_STYLE: {TRADING_CONFIG['TRADING_STYLE']}. Must be one of {valid_trading_styles}")
         return False
-
+    
     return True
 
 if __name__ == '__main__':
