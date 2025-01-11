@@ -1,47 +1,39 @@
 # aipsarg/main.py
-import logging
-import os
-from dotenv import load_dotenv
-from configs.config import TRADING_CONFIG
+from configs.config import PAIRS, TRADING_CONFIG, INDICATOR_CONFIG
+from api.api_utils import ExchangeAPI
+from data.data_utils import DataHandler
+from model.model_utils import ModelManager
 from ai.trading_ai import TradingAI
+import logging
+import time
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
 
-def setup_logging():
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - [%(levelname)s] - %(name)s - %(message)s'
-    )
-
-def load_configuration():
-    load_dotenv()
-    required_vars = ['API_KEY', 'SECRET_KEY', 'PASSPHRASE', 'INST_ID']
-    missing_vars = [var for var in required_vars if not os.getenv(var)]
-    if missing_vars:
-        raise ValueError(f"Missing required configuration variables: {', '.join(missing_vars)}")
-    return Config(
-        api_key=os.getenv('API_KEY'),
-        secret_key=os.getenv('SECRET_KEY'),
-        passphrase=os.getenv('PASSPHRASE'),
-        inst_id=os.getenv('INST_ID')
-    )
+# Initialize API, DataHandler, ModelManager, and TradingAI
+exchange_api = ExchangeAPI()
+data_handler = DataHandler()
+model_manager = ModelManager()
+trading_ai = TradingAI()
 
 def main():
-    setup_logging()
-    logger = logging.getLogger(__name__)
-    
-    # Jika tidak menggunakan GPU, tambahkan ini:
-    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-
     try:
-        config = load_configuration()
-        trading_ai = TradingAI(
-            api_key=config.api_key,
-            secret_key=config.secret_key,
-            passphrase=config.passphrase,
-            inst_id=config.inst_id
-        )
-        logger.info("Bot trading berhasil dimulai.")
+        logging.info("Starting trading bot...")
+        while True:
+            # Fetch market data
+            df = data_handler.fetch_market_data(PAIRS)
+
+            # Load model and scaler
+            model, scaler = model_manager.load_model_and_scaler()
+
+            # Execute trading strategy
+            trading_ai.trading_strategy(df, PAIRS, model, scaler, trading_style='short_term')
+
+            # Sleep for a defined interval before the next iteration
+            time.sleep(TRADING_CONFIG['MONITOR_SLEEP_INTERVAL'])
+    except KeyboardInterrupt:
+        logging.info("Trading bot stopped by user.")
     except Exception as e:
-        logger.error(f"Bot trading gagal dimulai: {e}")
+        logging.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
