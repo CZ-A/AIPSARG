@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import logging
 
 # Load environment variables from .env file
-env_path = '/../.env'
+env_path = './.env'
 load_dotenv(env_path)
 
 # --- API Configuration ---
@@ -24,7 +24,7 @@ TRADING_CONFIG = {
     "TAKE_PROFIT_PERCENTAGE": float(os.getenv("TAKE_PROFIT_PERCENTAGE", 0.05)),
     "STOP_LOSS_PERCENTAGE": float(os.getenv("STOP_LOSS_PERCENTAGE", 0.03)),
     "MONITOR_SLEEP_INTERVAL": int(os.getenv("MONITOR_SLEEP_INTERVAL", 0)),
-    "BOT_STATE_FILE": "/content/drive/MyDrive/lab.alice/bot_state.json"  # Tambahkan BOT_STATE_FILE di sini
+    "BOT_STATE_FILE": "./bot_state.json"  # Tambahkan BOT_STATE_FILE di sini
 }
 
 # --- Model Configuration ---
@@ -81,9 +81,9 @@ INDICATOR_CONFIG = {
 }
 
 # --- File Paths ---
-MODEL_FILE = "/../model.h5"
-SCALER_FILE = "/../scaler.json"
-OUTPUT_DIR = "/../lab.alice"
+MODEL_FILE = "./model.h5"
+SCALER_FILE = "./scaler.json"
+OUTPUT_DIR = "./lab.alice"
 
 def validate_config():
     """Validates if essential configuration variables are set."""
