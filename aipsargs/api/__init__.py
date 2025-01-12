@@ -1,1 +1,1 @@
-# AIPSARG/api/__init__.py
+# aipsargs/api/__init__.py
