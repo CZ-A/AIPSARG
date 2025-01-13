@@ -1,0 +1,13 @@
+pandas
+numpy
+tensorflow
+scikit-learn
+python-dotenv
+PyNaCl
+tenacity
+retrying
+ta
+flake8
+autopep8
+black
+ccxt
